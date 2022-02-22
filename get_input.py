@@ -17,7 +17,7 @@ def first_digit(num):
     return int(str(num)[0])
 
 
-file = "Data/54.csv"
+file = "43.csv"
 data = pd.read_csv(file, na_values=['-', 'ND'], header=[0])
 
 
