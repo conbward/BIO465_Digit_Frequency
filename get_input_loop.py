@@ -2,6 +2,17 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+#
+def get_frequencies(nums):
+    freqs_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    for num in nums:
+        if not pd.isna(num):
+            freqs_list[num] += 1
+    freqs_df = pd.DataFrame(freqs_list, index=range(0, 10), columns=['freq'])
+
+    return freqs_df
+
+
 
 #returns the first digit after the decimal point
 def first_after_decimal(num):
@@ -14,12 +25,13 @@ def first_after_decimal(num):
 def first_digit(num):
     if pd.isna(num):
         return
-    if num == 0:
+    if float(num) == 0:
         return
-    return int(str(num)[1])
+    num = num * 10000
+    return int(str(abs(num))[0])
 
 
-file = "Data/25.csv"
+file = "Data/11.csv"
 data = pd.read_csv(file, na_values=['-', 'ND'], header=[0])
 
 
@@ -35,13 +47,12 @@ for column in data:
     last_digit_dict[column] = last_digit
 
 
-df1 = pd.Series(last_digits).value_counts().sort_index().reset_index().reset_index(drop=True)
+df1 = get_frequencies(last_digits)
 
 
 for key in last_digit_dict.keys():
-    frequencies = pd.Series(last_digit_dict[key]).value_counts().sort_index().reset_index().reset_index(drop=True)
-    frequencies.columns = ['Element', 'Frequency']
-    frequencies['Percentage'] = frequencies['Frequency'] / sum(frequencies['Frequency']) * 100
+    frequencies = get_frequencies(last_digit_dict[key])
+    frequencies['Percentage'] = frequencies['freq'] / sum(frequencies['freq']) * 100
     last_digit_freq[key] = frequencies
     message = (f"{key}"
     f"{frequencies}"
@@ -49,10 +60,10 @@ for key in last_digit_dict.keys():
     print(message)
 
 
-df1.columns = ['Element', 'Frequency']
-df1['Percentage'] = df1['Frequency'] / sum(df1['Frequency']) * 100
 
-plt.bar(x = df1['Element'], height = df1['Percentage'])
+df1['Percentage'] = df1['freq'] / sum(df1['freq']) * 100
+
+plt.bar(x = df1.index, height = df1['Percentage'])
 plt.yticks(np.arange(0, 11, 1))
 plt.show()
 
