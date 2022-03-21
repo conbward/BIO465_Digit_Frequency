@@ -31,7 +31,7 @@ def first_digit(num):
     return int(str(abs(num))[0])
 
 
-file = "Data/11.csv"
+file = "Data/72.csv"
 data = pd.read_csv(file, na_values=['-', 'ND'], header=[0])
 
 
@@ -50,10 +50,14 @@ for column in data:
 df1 = get_frequencies(last_digits)
 
 
+col_freq = pd.DataFrame(index=range(0, 10))
+
+
 for key in last_digit_dict.keys():
     frequencies = get_frequencies(last_digit_dict[key])
     frequencies['Percentage'] = frequencies['freq'] / sum(frequencies['freq']) * 100
     last_digit_freq[key] = frequencies
+    col_freq[key] = frequencies['Percentage']
     message = (f"{key}"
     f"{frequencies}"
     f"")
@@ -63,7 +67,12 @@ for key in last_digit_dict.keys():
 
 df1['Percentage'] = df1['freq'] / sum(df1['freq']) * 100
 
-plt.bar(x = df1.index, height = df1['Percentage'])
-plt.yticks(np.arange(0, 11, 1))
+transposed = col_freq.transpose()[1:].copy()
+plt.boxplot(transposed, sym="r.", medianprops=dict(color="black"))
+plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+plt.ylabel("Frequency (percentage)")
+plt.xlabel("Digit")
+plt.title("Digit frequency of first number")
 plt.show()
+
 
